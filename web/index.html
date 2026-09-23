@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Valuation Desk</title>
+  <meta name="description" content="Premier League and La Liga players: what they did last season, what the market says they're worth, and where a model disagrees.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script>
+    // set the theme before first paint so dark mode doesn't flash white
+    try {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light" || saved === "dark") document.documentElement.dataset.theme = saved;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-strip">
+      <span id="edition-line">Loading the numbers…</span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch colour theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      </button>
+    </div>
+    <h1 class="masthead-title">The Valuation Desk</h1>
+    <p class="standfirst">What Premier League and La Liga players actually did last season, what the market says they're worth, and where a model trained on those numbers disagrees.</p>
+  </header>
+
+  <div class="ticker" id="ticker" aria-label="Biggest gaps between the model and the market">
+    <span class="ticker-label">Biggest gaps</span>
+    <div class="ticker-window"><div class="ticker-track" id="ticker-track"></div></div>
+  </div>
+
+  <div class="layout">
+    <aside class="desk-controls" aria-label="Choose league, model and player">
+      <div class="control">
+        <span class="control-label" id="league-label">League</span>
+        <div class="segmented" role="radiogroup" aria-labelledby="league-label" id="league-picker"></div>
+      </div>
+      <div class="control">
+        <span class="control-label" id="model-label">Model</span>
+        <div class="segmented" role="radiogroup" aria-labelledby="model-label" id="model-picker">
+          <button type="button" role="radio" data-value="linear">Linear</button>
+          <button type="button" role="radio" data-value="forest">Random forest</button>
+        </div>
+        <p class="control-hint" id="model-hint"></p>
+      </div>
+      <div class="control">
+        <label class="control-label" for="player-search">Player</label>
+        <div class="search" id="search">
+          <input id="player-search" type="search" autocomplete="off" spellcheck="false" placeholder="Search by name or club" role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list">
+          <ul class="search-results" id="search-results" role="listbox" hidden></ul>
+        </div>
+      </div>
+      <p class="control-note">Values are Transfermarkt's. The model only sees age, position, minutes, goals, assists, shots on target, key passes, tackles and how good the club was.</p>
+    </aside>
+
+    <main>
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button type="button" role="tab" id="tab-desk" aria-controls="panel-desk" aria-selected="true">The valuation</button>
+        <button type="button" role="tab" id="tab-model" aria-controls="panel-model" aria-selected="false" tabindex="-1">How the model thinks</button>
+      </nav>
+
+      <section class="panel" id="panel-desk" role="tabpanel" aria-labelledby="tab-desk">
+        <div class="mode-switch" role="radiogroup" aria-label="Valuation mode" id="mode-switch">
+          <button type="button" role="radio" data-value="player" aria-checked="true">A real player</button>
+          <button type="button" role="radio" data-value="build" aria-checked="false">Build your own</button>
+        </div>
+
+        <div class="desk-grid">
+          <article class="slip" id="slip" aria-live="polite">
+            <div class="slip-head">
+              <div>
+                <p class="slip-meta" id="slip-meta"></p>
+                <h2 class="slip-name" id="slip-name"></h2>
+              </div>
+              <div class="stamp" id="stamp" aria-hidden="true"></div>
+            </div>
+            <div class="slip-figures">
+              <div class="figure" id="figure-model">
+                <span class="figure-label">Model says</span>
+                <span class="figure-value" id="value-model">…</span>
+                <span class="figure-sub" id="value-model-sub"></span>
+              </div>
+              <div class="figure" id="figure-market">
+                <span class="figure-label">Market says</span>
+                <span class="figure-value" id="value-market">…</span>
+                <span class="figure-sub" id="value-market-sub"></span>
+              </div>
+            </div>
+            <div class="gap-scale" id="gap-scale"></div>
+            <p class="slip-verdict" id="slip-verdict"></p>
+            <div class="receipt" id="receipt">
+              <span class="receipt-label">What the model was shown</span>
+              <ul id="receipt-list"></ul>
+            </div>
+            <div class="comparables" id="comparables" hidden>
+              <span class="comparables-label">Similar price tags</span>
+              <ul id="comparables-list"></ul>
+            </div>
+          </article>
+
+          <section class="whatif" aria-labelledby="whatif-title">
+            <div class="whatif-head">
+              <h3 id="whatif-title">What if…</h3>
+              <button type="button" class="link-button" id="whatif-reset" hidden>Reset to real stats</button>
+            </div>
+            <p class="whatif-intro" id="whatif-intro">Drag anything below and the price moves with it.</p>
+            <div class="whatif-selects">
+              <label>Club
+                <select id="input-team"></select>
+              </label>
+              <label>Position
+                <select id="input-position">
+                  <option>Defender</option>
+                  <option>Midfielder</option>
+                  <option>Forward</option>
+                </select>
+              </label>
+            </div>
+            <div class="sliders" id="sliders"></div>
+          </section>
+        </div>
+
+        <section class="board" aria-labelledby="board-title">
+          <div class="board-head">
+            <h3 id="board-title">The board</h3>
+            <div class="chips" id="board-position" role="group" aria-label="Filter by position"></div>
+          </div>
+          <p class="board-intro">Every player in the league, sorted by how many euros the model and the market disagree by. Click Gap to flip it and see who looks most overpriced. Click a row to open the player.</p>
+          <div class="table-wrap">
+            <table class="board-table" id="board-table">
+              <thead>
+                <tr>
+                  <th scope="col" data-sort="name">Player</th>
+                  <th scope="col" data-sort="team" class="hide-sm">Club</th>
+                  <th scope="col" data-sort="age" class="num">Age</th>
+                  <th scope="col" data-sort="value" class="num">Market</th>
+                  <th scope="col" data-sort="pred" class="num">Model</th>
+                  <th scope="col" data-sort="gap" class="num" aria-sort="descending">Gap</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <button type="button" class="link-button board-more" id="board-more">Show more</button>
+        </section>
+      </section>
+
+      <section class="panel" id="panel-model" role="tabpanel" aria-labelledby="tab-model" hidden>
+        <div class="tiles" id="tiles"></div>
+
+        <section class="chart-block" aria-labelledby="importance-title">
+          <h3 id="importance-title">What moves the price</h3>
+          <p class="chart-intro">Shuffle one column at random and see how much worse the predictions get. The bigger the drop, the more the model leans on it. Measured on players it wasn't trained on.</p>
+          <div class="chart" id="importance-chart"></div>
+        </section>
+
+        <section class="chart-block" aria-labelledby="scatter-title">
+          <div class="chart-block-head">
+            <h3 id="scatter-title">Model against market</h3>
+            <div class="chips" id="scatter-position" role="group" aria-label="Filter by position"></div>
+          </div>
+          <p class="chart-intro">Each dot is a player, predicted by a model that never saw them during training. On the dotted line the two agree exactly. Log scales, so a €5m miss on a €10m player counts the same as a €50m miss on a €100m one. Click a dot to open the player.</p>
+          <div class="legend" id="scatter-legend"></div>
+          <div class="chart chart-scatter" id="scatter-chart"></div>
+        </section>
+
+        <section class="notes">
+          <h3>What it can't see</h3>
+          <ul>
+            <li>Contract length. A player with a year left is worth far less to sell, and the model has no idea.</li>
+            <li>Injuries, reputation, shirt sales, international football, the agent. All of that is in the market price and none of it is in the stats.</li>
+            <li>Keepers. Goals and tackles say nothing about a goalkeeper, so they're left out entirely.</li>
+            <li>Age does most of the work. Young players are priced on what they might become, which no season of stats can show.</li>
+          </ul>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <footer class="colophon">
+    <p>Stats from <a href="https://www.sofascore.com" rel="noopener">Sofascore</a>, market values from <a href="https://github.com/dcaribou/transfermarkt-datasets" rel="noopener">transfermarkt-datasets</a>. Outfield players with 600+ league minutes.</p>
+    <p><a href="https://github.com/mrayyan6/transfer-value-predictor" rel="noopener">Source on GitHub</a> · <span id="exported-line"></span></p>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="status" hidden></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
