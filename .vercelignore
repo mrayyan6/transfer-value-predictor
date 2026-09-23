@@ -1,6 +1,5 @@
 # only web/ gets served, keep the python side out of the upload
 /.venv
-/.github
 /data
 /models
 /reports
@@ -8,3 +7,4 @@
 /*.py
 /requirements.txt
 /docs
+/refresh.log

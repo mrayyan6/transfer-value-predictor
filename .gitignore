@@ -13,3 +13,6 @@ data/raw/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# written by refresh.py
+refresh.log

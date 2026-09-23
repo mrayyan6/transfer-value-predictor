@@ -80,7 +80,21 @@ Downloads are cached in `data/raw/`, pass `--refresh` to `data_loader.py` to fet
 
 It's a static site. On Vercel, import the repo and deploy, `vercel.json` already points it at `web/` with no build step. `.vercelignore` keeps the Python side out of the upload.
 
-A GitHub Action (`.github/workflows/refresh.yml`) runs on the 3rd of every month. It refetches everything, and only if the player table changed does it retrain, re-export, run the tests and commit, which triggers a fresh Vercel deploy. The Transfermarkt snapshot stopped updating in July 2026, so for now it mostly confirms nothing changed.
+### Keeping the data fresh
+
+`refresh.py` refetches everything, and only if the player table changed does it retrain, re-export, run the tests, commit and push. The push is what makes Vercel redeploy.
+
+I first had this as a GitHub Action, but Sofascore answers GitHub's servers with a 403 (it blocks cloud IPs), so it runs from my own machine instead, as a Windows scheduled task every four weeks:
+
+```powershell
+$py = "$PWD\.venv\Scripts\pythonw.exe"
+$action = New-ScheduledTaskAction -Execute $py -Argument "refresh.py" -WorkingDirectory $PWD
+$trigger = New-ScheduledTaskTrigger -Weekly -WeeksInterval 4 -DaysOfWeek Saturday -At 10am
+$settings = New-ScheduledTaskSettingsSet -StartWhenAvailable
+Register-ScheduledTask -TaskName "transfer-value-predictor refresh" -Action $action -Trigger $trigger -Settings $settings
+```
+
+`-StartWhenAvailable` means a missed run happens the next time the PC is on. Output goes to `refresh.log`. The Transfermarkt snapshot stopped updating in July 2026, so for now it mostly confirms nothing changed.
 
 ## Layout
 
@@ -88,6 +102,7 @@ A GitHub Action (`.github/workflows/refresh.yml`) runs on the 3rd of every month
 data_loader.py      fetching, caching, name matching
 model.py            training, cross validation, metrics, charts
 export_web.py       models and players to JSON
+refresh.py          the whole pipeline plus commit and push, for the scheduled task
 data/               processed player table and manual matches
 models/             joblib pipelines
 reports/            metrics, importances, out of fold predictions, png charts
