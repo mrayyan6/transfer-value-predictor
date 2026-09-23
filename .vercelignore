@@ -1,0 +1,9 @@
+# only web/ gets served, keep the python side out of the upload
+/.venv
+/.github
+/data
+/models
+/reports
+/tests
+/*.py
+/requirements.txt
