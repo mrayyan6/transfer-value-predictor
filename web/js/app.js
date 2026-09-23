@@ -696,7 +696,7 @@ function readHash() {
 // search
 
 function normalise(s) {
-  return s.normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/ø/gi, "o").toLowerCase();
+  return s.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/ø/gi, "o").toLowerCase();
 }
 
 function wireSearch() {
