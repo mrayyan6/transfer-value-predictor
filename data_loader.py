@@ -341,7 +341,10 @@ def build(season: str = DEFAULT_SEASON, refresh: bool = False, verbose: bool = T
         "season", "value_date", "sofascore_id", "tm_player_id", "match_method",
     ]
     df = df.dropna(subset=["age", "market_value_m"])[columns]
-    return df.sort_values(["league", "market_value_m"], ascending=[True, False]).reset_index(drop=True)
+    # the id tie-breaker keeps the row order identical between runs, so the
+    # scheduled refresh only commits when something actually changed
+    order = ["league", "market_value_m", "sofascore_id"]
+    return df.sort_values(order, ascending=[True, False, True]).reset_index(drop=True)
 
 
 def load_players() -> pd.DataFrame:

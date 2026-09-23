@@ -22,41 +22,41 @@
    "key": "premier_league",
    "metrics": {
     "linear": {
-     "rmse_m": 13.65,
-     "mae_m": 9.05,
-     "r2": 0.683,
-     "r2_log": 0.789,
+     "rmse_m": 13.53,
+     "mae_m": 8.96,
+     "r2": 0.689,
+     "r2_log": 0.788,
      "n": 355
     },
     "forest": {
-     "rmse_m": 15.73,
-     "mae_m": 9.62,
-     "r2": 0.579,
-     "r2_log": 0.778,
+     "rmse_m": 15.84,
+     "mae_m": 9.72,
+     "r2": 0.573,
+     "r2_log": 0.776,
      "n": 355
     }
    },
    "importance": {
     "linear": {
-     "age": 1.0687,
-     "minutes_played": 0.1088,
-     "goals": 0.0417,
-     "assists": -0.0015,
-     "shots_on_target": 0.0053,
-     "key_passes": 0.0061,
-     "tackles": 0.0035,
-     "team_ppg": 0.2142,
-     "position": -0.0018
+     "age": 1.0814,
+     "minutes_played": 0.1093,
+     "goals": 0.0406,
+     "assists": 0.0006,
+     "shots_on_target": 0.0006,
+     "key_passes": 0.0052,
+     "tackles": 0.0039,
+     "team_ppg": 0.2059,
+     "position": -0.0007
     },
     "forest": {
-     "age": 0.9226,
-     "minutes_played": 0.0444,
-     "goals": 0.013,
-     "assists": 0.0037,
-     "shots_on_target": 0.0323,
-     "key_passes": 0.0092,
-     "tackles": 0.0028,
-     "team_ppg": 0.1886,
+     "age": 0.9365,
+     "minutes_played": 0.046,
+     "goals": 0.0174,
+     "assists": 0.0042,
+     "shots_on_target": 0.0356,
+     "key_passes": 0.0075,
+     "tackles": 0.0022,
+     "team_ppg": 0.1787,
      "position": 0.0005
     }
    },
@@ -202,42 +202,42 @@
    "key": "la_liga",
    "metrics": {
     "linear": {
-     "rmse_m": 13.73,
-     "mae_m": 5.71,
-     "r2": 0.659,
-     "r2_log": 0.769,
+     "rmse_m": 14.69,
+     "mae_m": 5.77,
+     "r2": 0.61,
+     "r2_log": 0.768,
      "n": 371
     },
     "forest": {
-     "rmse_m": 13.62,
-     "mae_m": 6.02,
-     "r2": 0.665,
-     "r2_log": 0.765,
+     "rmse_m": 14.34,
+     "mae_m": 6.19,
+     "r2": 0.628,
+     "r2_log": 0.745,
      "n": 371
     }
    },
    "importance": {
     "linear": {
-     "age": 0.5965,
-     "minutes_played": 0.0797,
-     "goals": 0.0189,
-     "assists": 0.0007,
-     "shots_on_target": 0.0325,
-     "key_passes": 0.0051,
-     "tackles": 0.0003,
-     "team_ppg": 0.5861,
-     "position": 0.0073
+     "age": 0.6271,
+     "minutes_played": 0.0878,
+     "goals": 0.0224,
+     "assists": 0.0005,
+     "shots_on_target": 0.0222,
+     "key_passes": 0.0034,
+     "tackles": 0.0031,
+     "team_ppg": 0.5822,
+     "position": 0.0104
     },
     "forest": {
-     "age": 0.5733,
-     "minutes_played": 0.0721,
-     "goals": 0.0132,
-     "assists": 0.0062,
-     "shots_on_target": 0.0281,
-     "key_passes": 0.0356,
-     "tackles": 0.003,
-     "team_ppg": 0.5207,
-     "position": 0.0003
+     "age": 0.5789,
+     "minutes_played": 0.072,
+     "goals": 0.0091,
+     "assists": 0.0031,
+     "shots_on_target": 0.0171,
+     "key_passes": 0.0278,
+     "tackles": 0.0017,
+     "team_ppg": 0.5051,
+     "position": 0.0011
     }
    },
    "ranges": {
