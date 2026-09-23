@@ -1,0 +1,50 @@
+{
+  "Premier League": {
+    "linear": {
+      "age": 1.0687,
+      "minutes_played": 0.1088,
+      "goals": 0.0417,
+      "assists": -0.0015,
+      "shots_on_target": 0.0053,
+      "key_passes": 0.0061,
+      "tackles": 0.0035,
+      "team_ppg": 0.2142,
+      "position": -0.0018
+    },
+    "forest": {
+      "age": 0.9226,
+      "minutes_played": 0.0444,
+      "goals": 0.013,
+      "assists": 0.0037,
+      "shots_on_target": 0.0323,
+      "key_passes": 0.0092,
+      "tackles": 0.0028,
+      "team_ppg": 0.1886,
+      "position": 0.0005
+    }
+  },
+  "La Liga": {
+    "linear": {
+      "age": 0.5965,
+      "minutes_played": 0.0797,
+      "goals": 0.0189,
+      "assists": 0.0007,
+      "shots_on_target": 0.0325,
+      "key_passes": 0.0051,
+      "tackles": 0.0003,
+      "team_ppg": 0.5861,
+      "position": 0.0073
+    },
+    "forest": {
+      "age": 0.5733,
+      "minutes_played": 0.0721,
+      "goals": 0.0132,
+      "assists": 0.0062,
+      "shots_on_target": 0.0281,
+      "key_passes": 0.0356,
+      "tackles": 0.003,
+      "team_ppg": 0.5207,
+      "position": 0.0003
+    }
+  }
+}
